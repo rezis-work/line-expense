@@ -17,8 +17,8 @@ const transactionTypeDef = `#graphql
  }
 
  type Mutation {
-  createTransaction(input: TransactionInput!): Transaction!
-  updateTransaction(input: TransactionInput!): Transaction!
+  createTransaction(input: createTransactionInput!): Transaction!
+  updateTransaction(input: updateTransactionInput!): Transaction!
   deleteTransaction(transactionId: ID!): Transaction!
  }
 

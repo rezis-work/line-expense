@@ -1,13 +1,36 @@
+import http from "http";
+import express from "express";
+import cors from "cors";
+
 import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
+import { expressMiddleware } from "@apollo/server/express4";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+
 import mergedResolvers from "./resolvers/index.js";
 import mergedTypeDefs from "./typeDefs/index.js";
+
+const app = express();
+
+const httpServer = http.createServer(app);
 
 const server = new ApolloServer({
   typeDefs: mergedTypeDefs,
   resolvers: mergedResolvers,
+  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
 
-const { url } = await startStandaloneServer(server);
+await server.start();
 
-console.log(`Server is running at ${url}`);
+app.use(
+  "/graphql",
+  cors(),
+  express.json(),
+  express.urlencoded({ extended: true }),
+  expressMiddleware(server, {
+    context: async ({ req }) => ({ req }),
+  })
+);
+
+await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
+
+console.log(`Server is running at http://localhost:4000`);

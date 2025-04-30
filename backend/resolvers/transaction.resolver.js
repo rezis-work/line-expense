@@ -1,4 +1,4 @@
-import transactions from "../dummyData/transactions.js";
+import { transactions } from "../dummyData/data.js";
 
 const transactionResolver = {
   Query: {},
